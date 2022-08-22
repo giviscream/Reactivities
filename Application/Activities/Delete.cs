@@ -22,10 +22,10 @@ namespace Application.Activities
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
                 var activity = await _context.Activities.FindAsync(request.Id);
-
+                /*
                 if (activity == null)
                     return null;
-
+                */
                 _context.Activities.Remove(activity);
 
                 var result = await _context.SaveChangesAsync() > 0;
