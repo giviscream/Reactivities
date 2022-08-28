@@ -1,4 +1,6 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { toast } from "react-toastify";
+import { history } from "../..";
 import { Activity } from "../models/acitivity";
 
 const sleep = (delay: number) => {
@@ -7,16 +9,46 @@ const sleep = (delay: number) => {
     })
 }
 
+interface AxiosResponseData {
+    errors: string[]
+}
+
 axios.defaults.baseURL = 'http://localhost:5000/api';
 
 axios.interceptors.response.use(async response => {
-    try {
-        await sleep(1000);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return await Promise.reject(error);
+    await sleep(1000);
+    return response;
+}, (error: AxiosError) => {
+    const {data, status} = error.response!;
+    switch (status) {
+        case 400:
+            if (data instanceof Object && data.hasOwnProperty('errors')){
+                const modalStateErrors = [];
+                const {errors} = data as AxiosResponseData
+                for (const key in errors){
+                    if (errors[key]){
+                        modalStateErrors.push(errors[key])
+                    }
+                }
+                throw modalStateErrors.flat();
+            }
+            else {
+                const errorText = data as string;
+                toast.error(errorText);
+            }
+            break;
+        case 401:
+            toast.error('unauthorised');
+            break;
+        case 404:
+            history.push('/not-found');
+            break;
+        case 500:
+            toast.error('server error');
+            break;
     }
+
+    return Promise.reject(error);
 });
 
 const responseBody = <T> (response: AxiosResponse<T>) => response.data;
