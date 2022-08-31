@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction} from "mobx";
-import agent from "../app/api/agent";
-import { Activity } from "../app/models/acitivity";
+import agent from "../api/agent";
+import { Activity } from "../models/acitivity";
 
 export default class ActivityStore{
     activityRegistry = new Map<string, Activity>();

@@ -1,7 +1,9 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { history } from "../..";
+import { store } from "../stores/store";
 import { Activity } from "../models/acitivity";
+import { ServerError } from "../models/serverError";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -10,7 +12,7 @@ const sleep = (delay: number) => {
 }
 
 interface AxiosResponseData {
-    errors: string[]
+    errors: object
 }
 
 axios.defaults.baseURL = 'http://localhost:5000/api';
@@ -19,23 +21,35 @@ axios.interceptors.response.use(async response => {
     await sleep(1000);
     return response;
 }, (error: AxiosError) => {
-    const {data, status} = error.response!;
+    const {data, status, config} = error.response!;
     switch (status) {
         case 400:
+            //to do: Разобраться, почему требуются яные привидения и не работают конструкции .?
+            if (typeof data === 'string'){
+                toast.error(data);
+            }
             if (data instanceof Object && data.hasOwnProperty('errors')){
-                const modalStateErrors = [];
                 const {errors} = data as AxiosResponseData
+                const modalStateErrors = [];
+                
+                if (config.method === 'get' && errors.hasOwnProperty('id')){
+                    history.push('/not-found');
+                }
+
                 for (const key in errors){
-                    if (errors[key]){
-                        modalStateErrors.push(errors[key])
+                    if (errors[key as keyof Object]){
+                        modalStateErrors.push(errors[key as keyof Object])
                     }
                 }
                 throw modalStateErrors.flat();
+
             }
+            /*
             else {
                 const errorText = data as string;
                 toast.error(errorText);
             }
+            */
             break;
         case 401:
             toast.error('unauthorised');
@@ -44,7 +58,9 @@ axios.interceptors.response.use(async response => {
             history.push('/not-found');
             break;
         case 500:
-            toast.error('server error');
+            const serverError = data as ServerError;
+            store.commonStore.setServerError(serverError);
+            history.push('/server-error');
             break;
     }
 
