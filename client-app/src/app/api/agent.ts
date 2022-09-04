@@ -24,11 +24,11 @@ axios.interceptors.response.use(async response => {
     const {data, status, config} = error.response!;
     switch (status) {
         case 400:
-            //to do: Разобраться, почему требуются яные привидения и не работают конструкции .?
+            //to do: Разобраться, почему требуются яные приведения и не работают конструкции .?
             if (typeof data === 'string'){
                 toast.error(data);
             }
-            if (data instanceof Object && data.hasOwnProperty('errors')){
+            if (data instanceof Object  && data.hasOwnProperty('errors')){
                 const {errors} = data as AxiosResponseData
                 const modalStateErrors = [];
                 
