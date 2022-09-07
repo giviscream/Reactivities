@@ -8,7 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Persistence;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Identity;
+using Domain;
+//Не работает проверка namespace, проверить
 namespace API
 {
     public class Program
@@ -20,12 +22,13 @@ namespace API
             using var scope = host.Services.CreateScope();
 
             var services = scope.ServiceProvider;
-            var context = services.GetRequiredService<DataContext>();
+            
             try
             {
-                
+                var context = services.GetRequiredService<DataContext>();
+                var userManager = services.GetRequiredService<UserManager<AppUser>>();  
                 await context.Database.MigrateAsync();
-
+                await Seed.SeedData(context, userManager);
                 
             }
             catch(Exception ex)
@@ -33,7 +36,7 @@ namespace API
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An Error occured during the migration");
             }
-            await Seed.SeedData(context);
+            
             await host.RunAsync();
         }
 
