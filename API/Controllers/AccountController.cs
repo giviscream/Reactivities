@@ -56,13 +56,15 @@ namespace API.Controllers
             var userEmailExists = await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email);
             if (userEmailExists)
             {
-                return BadRequest("Email taken");
+                ModelState.AddModelError("email", "Email taken");
+                return ValidationProblem();
             }
 
             var userNameExists = await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username);
             if (userNameExists)
             {
-                return BadRequest("UserName taken");
+                ModelState.AddModelError("username", "Username taken");
+                return ValidationProblem();
             }
 
             var user = new AppUser
