@@ -2,18 +2,15 @@ using Persistence;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Domain;
-using Microsoft.EntityFrameworkCore;
 using Application.Activities;
-using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
     public class ActivitiesController : BaseAPIController
     {
 
         [HttpGet]
-        public async Task<ActionResult<List<Activity>>> GetActivities()
+        public async Task<IActionResult> GetActivities()
         {
             return HandleResult(await Mediator.Send(new List.Query()));   
         }
