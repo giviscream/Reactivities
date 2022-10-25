@@ -13,8 +13,12 @@ interface Props{
 export default function ActivityListItem({activity}: Props){
 
     let displayName;
+    let image;
     if (activity.host)
+    {
         displayName = activity.host.displayName; //can't use nullable check ?
+        image = activity.host.image;
+    }
     return (
         <Segment.Group>
             <Segment>
@@ -23,12 +27,14 @@ export default function ActivityListItem({activity}: Props){
                 }
                 <Item.Group>
                     <Item>
-                        <Item.Image style={{marginBottom: 3}} size='tiny' circular src='/assets/user.png' />
+                        <Item.Image style={{marginBottom: 3}} size='tiny' circular src={image || '/assets/user.png'} />
                         <Item.Content>
                             <Item.Header as={Link} to={`/activities/${activity.id}`}>
                                 {activity.title}
                             </Item.Header>
-                            <Item.Description>Hosted by {displayName}</Item.Description>
+                            <Item.Description>
+                                Hosted by <Link to={`/profiles/${activity.hostUsername}`}>{displayName}</Link>
+                            </Item.Description>
                             {activity.isHost && (
                                 <Item.Description>
                                     <Label basic color='orange'>
