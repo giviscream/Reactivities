@@ -6,6 +6,7 @@ import { Activity, ActivityFormValues } from "../models/acitivity";
 import { ServerError } from "../models/serverError";
 import { User, UserFormValues } from "../models/user";
 import { Photo, Profile } from "../models/profile";
+import { request } from "http";
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -112,7 +113,11 @@ const Profiles = {
         })
     },
     setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
-    deletePhoto: (id: string) => requests.delete(`/photos/${id}`)
+    deletePhoto: (id: string) => requests.delete(`/photos/${id}`),
+    updateProfile: (profile: Partial<Profile>) => requests.put(`/profiles`, profile),
+    updateFollowings: (username: string) => requests.post(`/follow/${username}`, {}),
+    listFollowings: (username: string, predicate: string) => 
+        requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`)
 }
 
 const agent = {
