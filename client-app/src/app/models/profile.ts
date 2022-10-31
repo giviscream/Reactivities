@@ -24,3 +24,10 @@ export class Profile implements Profile {
         this.image = user.image;
     }
 }
+
+export interface UserActivity {
+    id: string;
+    title: string;
+    category: string;
+    date: Date;
+}
