@@ -145,10 +145,12 @@ export default class ProfileStore {
                     storeUsername = store.userStore.user.username;
 
                 if (this.profile && this.profile.username !== storeUsername && this.profile.username === username) {
+                    console.log(this.profile);
                     following ? this.profile.followersCount++ : this.profile.followersCount--;
                     this.profile.following = !this.profile.following;
                 }
                 if (this.profile && this.profile.username === storeUsername) {
+                    console.log(this.profile);
                     following ? this.profile.followingCount++ : this.profile.followingCount--;
                 }
                 this.followings.forEach(profile => {

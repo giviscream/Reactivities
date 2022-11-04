@@ -20,7 +20,7 @@ export default observer (function ProfileCard({profile}: Props){
             </Card.Content>
             <Card.Content extra>
                 <Icon name='user' />
-                {profile.followersCount} {profile.followersCount == 1 ? 'follower' : 'followers'}
+                {profile.followersCount} followers
             </Card.Content>
             <FollowButton profile={profile}/>
         </Card>
